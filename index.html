@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Project - Plan my Day</title>
+    <style>
+        #container {
+            display: flex;
+            justify-content: space-between;
+        }
+        #timeBlocks, #tasks {
+            width: 48%;
+            padding: 10px;
+            height: 600px;
+            overflow-y: auto;
+        }
+        .timeBlock, .task {
+            border: 1px solid black;
+            margin: 5px;
+            padding: 5px;
+            width: 90%;
+        }
+        .task {
+            background-color: #f0f0f0;
+            cursor: pointer;
+        }
+        #taskInputArea {
+            margin-top: 20px;
+        }
+        #currentDay {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="currentDay"></div>
+
+<div id="container">
+    <div id="tasks">
+        <h2>Tasks</h2>
+        <div id="Personal" class="taskCategory"><h3>Personal</h3></div>
+        <div id="Work" class="taskCategory"><h3>Work</h3></div>
+        <div id="Other" class="taskCategory"><h3>Other</h3></div>
+        <div id="taskInputArea">
+            <input type="text" id="newTaskInput" placeholder="Enter a new task" />
+            <select id="taskTag">
+                <option value="Personal">Personal</option>
+                <option value="Work">Work</option>
+                <option value="Other">Other</option>
+            </select>
+            <button onclick="addTask()">Add Task</button>
+        </div>
+    </div>
+
+    <div id="timeBlocks">
+        <h2>Time Blocks</h2>
+        <!-- Time blocks will be added here dynamically -->
+        <div id="timeBlockInputArea">
+            <button onclick="addTimeBlock()">Add Next Hour</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let taskIdCounter = 0;
+    let nextHour = 8; // Start from 8:00 - 9:00 as the first time block
+
+    document.getElementById("currentDay").innerHTML = new Date().toLocaleDateString("en-US", {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
+
+    function addTask() {
+        const taskInput = document.getElementById('newTaskInput');
+        const taskTag = document.getElementById('taskTag').value;
+        if (taskInput.value.trim() !== "") {
+            taskIdCounter++;
+            const newTask = document.createElement('div');
+            newTask.textContent = taskInput.value;
+            newTask.className = 'task';
+            newTask.id = 'task' + taskIdCounter;
+            newTask.draggable = true;
+            newTask.addEventListener('dragstart', dragStart);
+            document.getElementById(taskTag).appendChild(newTask);
+            taskInput.value = ""; // Clear the input after adding the task
+        }
+    }
+
+    function dragStart(event) {
+        event.dataTransfer.setData("text/plain", event.target.id);
+    }
+
+    function allowDrop(event) {
+        event.preventDefault();
+    }
+
+    function drop(event) {
+        event.preventDefault();
+        var data = event.dataTransfer.getData("text");
+        var originalTask = document.getElementById(data);
+        var copiedTask = originalTask.cloneNode(true);
+        copiedTask.id = "new" + data; // Ensure the id is unique
+        copiedTask.onclick = function(e) { e.target.remove(); }; // Add click-to-remove functionality
+        event.target.appendChild(copiedTask);
+    }
+
+    document.querySelectorAll('.timeBlock').forEach(block => {
+        block.addEventListener('dragover', allowDrop);
+        block.addEventListener('drop', drop);
+    });
+
+    function addTimeBlock() {
+        const timeBlocksContainer = document.getElementById('timeBlocks');
+        const newBlock = document.createElement('div');
+        newBlock.className = 'timeBlock';
+        newBlock.onclick = function (event) { removeTask(event); };
+        let startTime = nextHour % 24;
+        let endTime = ++nextHour % 24;
+        newBlock.textContent = `${startTime}:00 - ${endTime}:00`;
+        newBlock.id = `${startTime}am`; // Adjust the ID for better uniqueness and referencing
+        timeBlocksContainer.insertBefore(newBlock, document.getElementById('timeBlockInputArea'));
+        newBlock.addEventListener('dragover', allowDrop);
+        newBlock.addEventListener('drop', drop);
+    }
+
+    function removeTask(event) {
+        if (event.target.className.includes('task')) {
+            event.target.remove();
+        }
+    }
+
+    // Additional functions (saveTasksToCookies, loadTasksFromCookies) go here
+
+    window.onload = function () {
+        loadTasksFromCookies();
+        document.querySelectorAll('.timeBlock').forEach(block => {
+            block.addEventListener('dragover', allowDrop);
+            block.addEventListener('drop', drop);
+        });
+    };
+</script>
+
+</body>
+</html>
+
