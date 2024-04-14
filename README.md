@@ -1,4 +1,4 @@
-**Key Functionalities of the Application**
+**Key Functionalities of the Application**:
 This overview provides a comprehensive guide to what the application does and how it can be used effectively for personal or professional scheduling.
 
 **Dynamic Date Display:**
