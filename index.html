@@ -1,50 +1,213 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Project - Plan my Day</title>
+            <style></style>
+        </head>
+        <body>
+            
+
+
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project - Plan my Day (Improved)</title>
     <style>
-        #container {
-            display: flex;
-            justify-content: space-between;
+        /* 1. Root variables for easy theme management */
+        :root {
+            --bg-color: #f7f8fc;
+            --main-text-color: #333;
+            --secondary-text-color: #666;
+            --container-bg: #ffffff;
+            --primary-color: #4a90e2;
+            --primary-hover-color: #357abd;
+            --task-bg: #f0f0f0;
+            --task-border: #ddd;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
-        #timeBlocks, #tasks {
-            width: 48%;
-            padding: 10px;
-            height: 600px;
-            overflow-y: auto;
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--main-text-color);
+            margin: 0;
+            padding: 20px;
         }
-        .timeBlock, .task {
-            border: 1px solid black;
-            margin: 5px;
-            padding: 5px;
-            width: 90%;
-        }
-        .task {
-            background-color: #f0f0f0;
-            cursor: pointer;
-        }
-        #taskInputArea {
-            margin-top: 20px;
-        }
+
         #currentDay {
             text-align: center;
-            font-size: 24px;
-            margin-bottom: 20px;
+            font-size: 1.75em;
+            font-weight: 300;
+            margin-bottom: 30px;
+            color: var(--secondary-text-color);
+        }
+
+        /* 2. Main layout using Flexbox and Grid for responsiveness */
+        #main-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .panel {
+            background-color: var(--container-bg);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 12px var(--shadow-color);
+            height: 70vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .panel-content {
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        .panel h2 {
+            text-align: center;
+            margin-top: 0;
+            font-weight: 500;
+            border-bottom: 1px solid var(--task-border);
+            padding-bottom: 15px;
+        }
+
+        /* 3. Improved Task and Time Block styling */
+        .taskCategory h3 {
+            font-weight: 500;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .task {
+            background-color: var(--container-bg);
+            border: 1px solid var(--task-border);
+            border-radius: 5px;
+            padding: 10px;
+            margin: 8px 0;
+            cursor: grab;
+            transition: background-color 0.2s, box-shadow 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .task:hover {
+            background-color: #e9e9e9;
+            box-shadow: 0 2px 5px var(--shadow-color);
+        }
+        
+        .task.dragging {
+            opacity: 0.5;
+            background: #cce5ff;
+            cursor: grabbing;
+        }
+
+        .timeBlock {
+            background-color: #f9f9f9;
+            border: 1px dashed var(--task-border);
+            border-radius: 5px;
+            margin: 8px 0;
+            padding: 10px;
+            min-height: 50px;
+            transition: background-color 0.2s;
+        }
+        
+        .timeBlock.drag-over {
+            background-color: #e6f7ff;
+            border-color: var(--primary-color);
+        }
+        
+        .timeBlock .task-in-block {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9em;
+        }
+
+        .task-in-block .remove-task {
+            cursor: pointer;
+            font-weight: bold;
+            padding: 0 5px;
+        }
+
+
+        /* 4. Modern Input and Button styles */
+        #taskInputArea, #timeBlockInputArea {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--task-border);
+            display: flex;
+            gap: 10px;
+        }
+        
+        #timeBlockInputArea {
+            justify-content: center;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--task-border);
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        
+        input[type="text"] {
+            flex-grow: 2;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover-color);
+        }
+
+        /* 5. Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            #main-container {
+                grid-template-columns: 1fr;
+            }
+            .panel {
+                height: auto;
+                min-height: 50vh;
+            }
         }
     </style>
-</head>
-<body>
 
-<div id="currentDay"></div>
 
-<div id="container">
-    <div id="tasks">
+
+<div id="currentDay">Tuesday, July 29, 2025</div>
+
+<div id="main-container">
+    <div id="tasks-panel" class="panel">
         <h2>Tasks</h2>
-        <div id="Personal" class="taskCategory"><h3>Personal</h3></div>
-        <div id="Work" class="taskCategory"><h3>Work</h3></div>
-        <div id="Other" class="taskCategory"><h3>Other</h3></div>
+        <div class="panel-content">
+            <div id="Personal" class="taskCategory"><h3>Personal</h3><div id="task1" class="task" draggable="true">work</div><div id="task2" class="task" draggable="true">work 2</div></div>
+            <div id="Work" class="taskCategory"><h3>Work</h3><div id="task3" class="task" draggable="true">work 2</div></div>
+            <div id="Other" class="taskCategory"><h3>Other</h3></div>
+        </div>
         <div id="taskInputArea">
-            <input type="text" id="newTaskInput" placeholder="Enter a new task" />
+            <input type="text" id="newTaskInput" placeholder="Enter a new task">
             <select id="taskTag">
                 <option value="Personal">Personal</option>
                 <option value="Work">Work</option>
@@ -54,9 +217,16 @@
         </div>
     </div>
 
-    <div id="timeBlocks">
+    <div id="timeblocks-panel" class="panel">
         <h2>Time Blocks</h2>
-        <!-- Time blocks will be added here dynamically -->
+        <div id="timeBlocks" class="panel-content">
+            <div class="timeBlock" id="time-8"><strong>8:00 - 9:00</strong><div class="task-in-block">
+                work
+                <span class="remove-task" title="Remove Task">×</span>
+            </div></div><div class="timeBlock" id="time-9"><strong>9:00 - 10:00</strong><div class="task-in-block">
+                work 2
+                <span class="remove-task" title="Remove Task">×</span>
+            </div></div><div class="timeBlock" id="time-10"><strong>10:00 - 11:00</strong></div><div class="timeBlock" id="time-11"><strong>11:00 - 12:00</strong></div></div>
         <div id="timeBlockInputArea">
             <button onclick="addTimeBlock()">Add Next Hour</button>
         </div>
@@ -64,83 +234,121 @@
 </div>
 
 <script>
+document.addEventListener('DOMContentLoaded', () => {
     let taskIdCounter = 0;
-    let nextHour = 8; // Start from 8:00 - 9:00 as the first time block
+    let nextHour = 8; // Start from 8:00 AM
 
+    // Display current date
     document.getElementById("currentDay").innerHTML = new Date().toLocaleDateString("en-US", {
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
     });
 
-    function addTask() {
-        const taskInput = document.getElementById('newTaskInput');
-        const taskTag = document.getElementById('taskTag').value;
-        if (taskInput.value.trim() !== "") {
-            taskIdCounter++;
-            const newTask = document.createElement('div');
-            newTask.textContent = taskInput.value;
-            newTask.className = 'task';
-            newTask.id = 'task' + taskIdCounter;
-            newTask.draggable = true;
-            newTask.addEventListener('dragstart', dragStart);
-            document.getElementById(taskTag).appendChild(newTask);
-            taskInput.value = ""; // Clear the input after adding the task
+    const taskInput = document.getElementById('newTaskInput');
+    const taskTag = document.getElementById('taskTag');
+
+    // Add task on "Enter" keypress
+    taskInput.addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            addTask();
         }
+    });
+
+    window.addTask = function() {
+        if (taskInput.value.trim() === "") return;
+
+        taskIdCounter++;
+        const newTask = document.createElement('div');
+        newTask.id = 'task' + taskIdCounter;
+        newTask.className = 'task';
+        newTask.draggable = true;
+        newTask.textContent = taskInput.value;
+
+        newTask.addEventListener('dragstart', dragStart);
+        newTask.addEventListener('dragend', dragEnd);
+        
+        document.getElementById(taskTag.value).appendChild(newTask);
+        taskInput.value = "";
     }
 
     function dragStart(event) {
-        event.dataTransfer.setData("text/plain", event.target.id);
+        event.dataTransfer.setData("text/plain", event.target.textContent);
+        event.dataTransfer.setData("text/id", event.target.id);
+        setTimeout(() => event.target.classList.add('dragging'), 0);
     }
+
+    function dragEnd(event) {
+        event.target.classList.remove('dragging');
+    }
+
+    const timeBlocksContainer = document.getElementById('timeBlocks');
+
+    // Use event delegation for removing scheduled tasks
+    timeBlocksContainer.addEventListener('click', function(event) {
+        if (event.target.classList.contains('remove-task')) {
+            event.target.parentElement.remove();
+        }
+    });
+
+    timeBlocksContainer.addEventListener('dragover', allowDrop);
+    timeBlocksContainer.addEventListener('dragleave', dragLeave);
+    timeBlocksContainer.addEventListener('drop', drop);
 
     function allowDrop(event) {
         event.preventDefault();
+        if (event.target.classList.contains('timeBlock')) {
+            event.target.classList.add('drag-over');
+        }
+    }
+    
+    function dragLeave(event) {
+        if (event.target.classList.contains('timeBlock')) {
+            event.target.classList.remove('drag-over');
+        }
     }
 
     function drop(event) {
         event.preventDefault();
-        var data = event.dataTransfer.getData("text");
-        var originalTask = document.getElementById(data);
-        var copiedTask = originalTask.cloneNode(true);
-        copiedTask.id = "new" + data; // Ensure the id is unique
-        copiedTask.onclick = function(e) { e.target.remove(); }; // Add click-to-remove functionality
-        event.target.appendChild(copiedTask);
-    }
+        if (event.target.classList.contains('timeBlock')) {
+            event.target.classList.remove('drag-over');
+            const taskText = event.dataTransfer.getData("text/plain");
 
-    document.querySelectorAll('.timeBlock').forEach(block => {
-        block.addEventListener('dragover', allowDrop);
-        block.addEventListener('drop', drop);
-    });
-
-    function addTimeBlock() {
-        const timeBlocksContainer = document.getElementById('timeBlocks');
-        const newBlock = document.createElement('div');
-        newBlock.className = 'timeBlock';
-        newBlock.onclick = function (event) { removeTask(event); };
-        let startTime = nextHour % 24;
-        let endTime = ++nextHour % 24;
-        newBlock.textContent = `${startTime}:00 - ${endTime}:00`;
-        newBlock.id = `${startTime}am`; // Adjust the ID for better uniqueness and referencing
-        timeBlocksContainer.insertBefore(newBlock, document.getElementById('timeBlockInputArea'));
-        newBlock.addEventListener('dragover', allowDrop);
-        newBlock.addEventListener('drop', drop);
-    }
-
-    function removeTask(event) {
-        if (event.target.className.includes('task')) {
-            event.target.remove();
+            const taskInBlock = document.createElement('div');
+            taskInBlock.className = 'task-in-block';
+            taskInBlock.innerHTML = `
+                ${taskText}
+                <span class="remove-task" title="Remove Task">&times;</span>
+            `;
+            event.target.appendChild(taskInBlock);
         }
     }
 
-    // Additional functions (saveTasksToCookies, loadTasksFromCookies) go here
-
-    window.onload = function () {
-        loadTasksFromCookies();
-        document.querySelectorAll('.timeBlock').forEach(block => {
-            block.addEventListener('dragover', allowDrop);
-            block.addEventListener('drop', drop);
-        });
-    };
+    window.addTimeBlock = function() {
+        if (nextHour >= 23) {
+            alert("You've scheduled the whole day!");
+            return;
+        }
+        const newBlock = document.createElement('div');
+        newBlock.className = 'timeBlock';
+        
+        let startTime = nextHour;
+        let endTime = ++nextHour;
+        newBlock.innerHTML = `<strong>${startTime}:00 - ${endTime}:00</strong>`;
+        newBlock.id = `time-${startTime}`;
+        
+        timeBlocksContainer.appendChild(newBlock);
+    }
+    
+    // Add a few default time blocks to start
+    for(let i=0; i<4; i++) {
+        addTimeBlock();
+    }
+});
 </script>
 
-</body>
-</html>
 
+
+
+            <script></script>
+        
+    
+</body>
